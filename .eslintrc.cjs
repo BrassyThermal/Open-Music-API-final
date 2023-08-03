@@ -9,10 +9,8 @@ module.exports = {
   overrides: [
     {
       files: [
-        './src/api/albums/handler.js',
-        './src/api/songs/handler.js',
-        './src/services/postgres/albumService.js',
-        './src/services/postgres/songService.js',
+        './src/api/**/*.js',
+        './src/services/postgres/**/*.js',
       ],
       rules: {
         'class-methods-use-this': 'off',
