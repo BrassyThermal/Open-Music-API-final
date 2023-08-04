@@ -5,7 +5,7 @@ const InvariantError = require('../../exceptions/invariantError');
 const AuthenticationError = require('../../exceptions/authError');
 const NotFoundError = require('../../exceptions/notFoundError');
 
-class UsersService {
+class UserService {
   constructor() {
     this._pool = new Pool();
   }
@@ -22,7 +22,7 @@ class UsersService {
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      throw new InvariantError('User gagal ditambahkan');
+      throw new InvariantError('User gagal ditambahkan!');
     }
     return result.rows[0].id;
   }
@@ -35,7 +35,7 @@ class UsersService {
 
     const result = await this._pool.query(query);
     if (result.rowCount > 0) {
-      throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
+      throw new InvariantError('Gagal menambahkan user. Username sudah digunakan!');
     }
   }
 
@@ -76,4 +76,4 @@ class UsersService {
   }
 }
 
-module.exports = UsersService;
+module.exports = UserService;

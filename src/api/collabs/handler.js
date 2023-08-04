@@ -1,16 +1,16 @@
 const autoBind = require('auto-bind');
 
-class CollaborationsHandler {
-  constructor(collaborationsService, playlistsService, usersService, validator) {
-    this._collaborationsService = collaborationsService;
-    this._playlistsService = playlistsService;
-    this._usersService = usersService;
-    this._validator = validator;
+class CollabsHandler {
+  constructor(collabService, playlistService, userService, CollabValidator) {
+    this._collaborationsService = collabService;
+    this._playlistsService = playlistService;
+    this._usersService = userService;
+    this._validator = CollabValidator;
     autoBind(this);
   }
 
-  async postCollaborationHandler(request, h) {
-    this._validator.validateCollaborationPayload(request.payload);
+  async postCollabs(request, h) {
+    this._validator.validateCollabs(request.payload);
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
@@ -18,19 +18,17 @@ class CollaborationsHandler {
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
     const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
-    const response = h.response({
+    return h.response({
       status: 'success',
       message: 'Kolaborasi berhasil ditambahkan',
       data: {
         collaborationId,
       },
-    });
-    response.code(201);
-    return response;
+    }).code(201);
   }
 
-  async deleteCollaborationHandler(request) {
-    this._validator.validateCollaborationPayload(request.payload);
+  async deleteCollabs(request) {
+    this._validator.validateCollabs(request.payload);
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
@@ -43,4 +41,4 @@ class CollaborationsHandler {
   }
 }
 
-module.exports = CollaborationsHandler;
+module.exports = CollabsHandler;

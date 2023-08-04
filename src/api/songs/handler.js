@@ -1,19 +1,18 @@
 const autoBind = require('auto-bind');
 
 class SongHandler {
-  constructor(service, validator) {
-    this._service = service;
-    this._validator = validator;
+  constructor(songService, SongValidator) {
+    this._service = songService;
+    this._validator = SongValidator;
     autoBind(this);
   }
 
   _validatePayload(payload) {
-    this._validator.validateSongPayload(payload);
+    this._validator.validateSong(payload);
   }
 
-  _createResponse(h, statusCode, responseData) {
-    const response = h.response(responseData);
-    return response.code(statusCode);
+  _Response(h, statusCode, responseData) {
+    return h.response(responseData).code(statusCode);
   }
 
   async postHandler(request, h) {
@@ -21,7 +20,7 @@ class SongHandler {
 
     const songId = await this._service.addSong(request.payload);
 
-    return this._createResponse(h, 201, {
+    return this._Response(h, 201, {
       status: 'success',
       message: 'Lagu berhasil ditambahkan!',
       data: { songId },
@@ -32,7 +31,7 @@ class SongHandler {
     const { title, performer } = request.query;
     const songs = await this._service.getAllSongs(title, performer);
 
-    return this._createResponse(h, 200, {
+    return this._Response(h, 200, {
       status: 'success',
       data: { songs },
     });
@@ -42,7 +41,7 @@ class SongHandler {
     const { id } = request.params;
     const song = await this._service.getSongById(id);
 
-    return this._createResponse(h, 200, {
+    return this._Response(h, 200, {
       status: 'success',
       data: { song },
     });
@@ -54,7 +53,7 @@ class SongHandler {
     const { id } = request.params;
     await this._service.updateSongById(id, request.payload);
 
-    return this._createResponse(h, 200, {
+    return this._Response(h, 200, {
       status: 'success',
       message: 'Lagu telah diperbarui!',
     });
@@ -64,7 +63,7 @@ class SongHandler {
     const { id } = request.params;
     await this._service.deleteSongById(id);
 
-    return this._createResponse(h, 200, {
+    return this._Response(h, 200, {
       status: 'success',
       message: 'Lagu telah dihapus!',
     });

@@ -1,42 +1,40 @@
 const autoBind = require('auto-bind');
 
 class AuthenticationsHandler {
-  constructor(authenticationsService, usersService, tokenManager, validator) {
-    this._authenticationsService = authenticationsService;
-    this._usersService = usersService;
+  constructor(authService, userService, tokenManager, AuthValidator) {
+    this._auth = authService;
+    this._user = userService;
     this._tokenManager = tokenManager;
-    this._validator = validator;
+    this._validator = AuthValidator;
     autoBind(this);
   }
 
-  async postAuthenticationHandler(request, h) {
-    this._validator.validatePostAuthenticationPayload(request.payload);
+  async postAuth(request, h) {
+    this._validator.validatePostAuth(request.payload);
 
     const { username, password } = request.payload;
-    const id = await this._usersService.verifyUserCredential(username, password);
+    const id = await this._user.verifyUserCredential(username, password);
 
     const accessToken = this._tokenManager.generateAccessToken({ id });
     const refreshToken = this._tokenManager.generateRefreshToken({ id });
 
-    await this._authenticationsService.addRefreshToken(refreshToken);
+    await this._auth.addRefreshToken(refreshToken);
 
-    const response = h.response({
+    return h.response({
       status: 'success',
       message: 'Authentication berhasil ditambahkan',
       data: {
         accessToken,
         refreshToken,
       },
-    });
-    response.code(201);
-    return response;
+    }).code(201);
   }
 
-  async putAuthenticationHandler(request) {
-    this._validator.validatePutAuthenticationPayload(request.payload);
+  async putAuth(request) {
+    this._validator.validatePutAuth(request.payload);
 
     const { refreshToken } = request.payload;
-    await this._authenticationsService.verifyRefreshToken(refreshToken);
+    await this._auth.verifyRefreshToken(refreshToken);
     const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
 
     const accessToken = this._tokenManager.generateAccessToken({ id });
@@ -49,12 +47,12 @@ class AuthenticationsHandler {
     };
   }
 
-  async deleteAuthenticationHandler(request) {
-    this._validator.validateDeleteAuthenticationPayload(request.payload);
+  async deleteAuth(request) {
+    this._validator.validateDeleteAuth(request.payload);
 
     const { refreshToken } = request.payload;
-    await this._authenticationsService.verifyRefreshToken(refreshToken);
-    await this._authenticationsService.deleteRefreshToken(refreshToken);
+    await this._auth.verifyRefreshToken(refreshToken);
+    await this._auth.deleteRefreshToken(refreshToken);
 
     return {
       status: 'success',
