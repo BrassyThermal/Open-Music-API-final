@@ -171,7 +171,8 @@ class PlaylistsService {
 
   async getPlaylistActivityLogs(playlistId) {
     const query = {
-      text: `SELECT users.username, songs.title, playlist_song_activities.activity, playlist_song_activities.time FROM playlist_song_activities
+      text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time 
+              FROM playlist_song_activities
               LEFT JOIN playlists ON playlist_song_activities.playlist_id = playlists.id
               LEFT JOIN songs ON playlist_song_activities.song_id = songs.id
               LEFT JOIN users ON playlist_song_activities.user_id = users.id
@@ -187,7 +188,7 @@ class PlaylistsService {
     const activityLog = result.rows.map((row) => ({
       username: row.username,
       title: row.title,
-      action: row.activity,
+      action: row.action,
       time: row.time,
     }));
 
