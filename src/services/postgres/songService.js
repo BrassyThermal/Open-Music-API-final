@@ -2,7 +2,6 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/invariantError');
 const NotFoundError = require('../../exceptions/notFoundError');
-const { mapSong } = require('../utils');
 
 class SongService {
   constructor() {
@@ -64,7 +63,7 @@ class SongService {
     if (!result.rowCount) {
       throw new NotFoundError('Lagu tidak ditemukan!');
     }
-    return mapSong(result.rows[0]);
+    return result.rows[0];
   }
 
   async updateSongById(id, {
