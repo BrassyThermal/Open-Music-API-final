@@ -1,6 +1,6 @@
 const autoBind = require('auto-bind');
 
-class AuthsHandler {
+class AuthHandler {
   constructor(authService, userService, tokenManager, AuthValidator) {
     this._auth = authService;
     this._user = userService;
@@ -9,7 +9,7 @@ class AuthsHandler {
     autoBind(this);
   }
 
-  async postAuth(request, h) {
+  async postHandler(request, h) {
     this._validator.validatePostAuth(request.payload);
 
     const { username, password } = request.payload;
@@ -22,7 +22,7 @@ class AuthsHandler {
 
     return h.response({
       status: 'success',
-      message: 'Authentication berhasil ditambahkan',
+      message: 'Autentikasi berhasil ditambahkan!',
       data: {
         accessToken,
         refreshToken,
@@ -30,35 +30,33 @@ class AuthsHandler {
     }).code(201);
   }
 
-  async putAuth(request) {
+  async putHandler(request) {
     this._validator.validatePutAuth(request.payload);
-
     const { refreshToken } = request.payload;
     await this._auth.verifyRefreshToken(refreshToken);
     const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
-
     const accessToken = this._tokenManager.generateAccessToken({ id });
+
     return {
       status: 'success',
-      message: 'Access token berhasil diperbarui',
+      message: 'Access token berhasil diperbarui!',
       data: {
         accessToken,
       },
     };
   }
 
-  async deleteAuth(request) {
+  async deleteHandler(request) {
     this._validator.validateDeleteAuth(request.payload);
-
     const { refreshToken } = request.payload;
     await this._auth.verifyRefreshToken(refreshToken);
     await this._auth.deleteRefreshToken(refreshToken);
 
     return {
       status: 'success',
-      message: 'Refresh token berhasil dihapus',
+      message: 'Refresh token berhasil dihapus!',
     };
   }
 }
 
-module.exports = AuthsHandler;
+module.exports = AuthHandler;

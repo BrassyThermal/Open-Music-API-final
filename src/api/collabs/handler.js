@@ -9,34 +9,34 @@ class CollabsHandler {
     autoBind(this);
   }
 
-  async postCollabs(request, h) {
+  async postHandler(request, h) {
     this._validator.validateCollabs(request.payload);
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
     await this._user.getUserById(userId);
-    await this._playlist.verifyPlaylistOwner(playlistId, credentialId);
+    await this._playlist.verifyOwner(playlistId, credentialId);
 
-    const collaborationId = await this._collab.addCollaboration(playlistId, userId);
+    const collaborationId = await this._collab.addCollabs(playlistId, userId);
     return h.response({
       status: 'success',
-      message: 'Kolaborasi berhasil ditambahkan',
+      message: 'Kolaborasi berhasil ditambahkan!',
       data: {
         collaborationId,
       },
     }).code(201);
   }
 
-  async deleteCollabs(request) {
+  async deleteHandler(request) {
     this._validator.validateCollabs(request.payload);
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    await this._playlist.verifyPlaylistOwner(playlistId, credentialId);
-    await this._collab.deleteCollaboration(playlistId, userId);
+    await this._playlist.verifyOwner(playlistId, credentialId);
+    await this._collab.deleteCollabs(playlistId, userId);
     return {
       status: 'success',
-      message: 'Kolaborasi berhasil dihapus',
+      message: 'Kolaborasi berhasil dihapus!',
     };
   }
 }

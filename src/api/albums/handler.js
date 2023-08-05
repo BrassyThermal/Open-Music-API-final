@@ -1,6 +1,6 @@
 const autoBind = require('auto-bind');
 
-class AlbumsHandler {
+class AlbumHandler {
   constructor(albumService, AlbumValidator) {
     this._service = albumService;
     this._validator = AlbumValidator;
@@ -17,7 +17,6 @@ class AlbumsHandler {
 
   async postHandler(request, h) {
     this._validatePayload(request.payload);
-
     const { name, year } = request.payload;
     const albumId = await this._service.addAlbum({ name, year });
 
@@ -41,7 +40,6 @@ class AlbumsHandler {
 
   async putByIdHandler(request, h) {
     this._validatePayload(request.payload);
-
     const { id } = request.params;
     await this._service.editAlbumById(id, request.payload);
 
@@ -62,4 +60,4 @@ class AlbumsHandler {
   }
 }
 
-module.exports = AlbumsHandler;
+module.exports = AlbumHandler;

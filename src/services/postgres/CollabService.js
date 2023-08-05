@@ -2,12 +2,12 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/invariantError');
 
-class CollaborationsService {
+class CollabService {
   constructor() {
     this._pool = new Pool();
   }
 
-  async addCollaboration(playlistId, userId) {
+  async addCollabs(playlistId, userId) {
     const id = `collab-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
@@ -21,7 +21,7 @@ class CollaborationsService {
     return result.rows[0].id;
   }
 
-  async deleteCollaboration(playlistId, userId) {
+  async deleteCollabs(playlistId, userId) {
     const query = {
       text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
       values: [playlistId, userId],
@@ -33,7 +33,7 @@ class CollaborationsService {
     }
   }
 
-  async verifyCollaborator(playlistId, userId) {
+  async verifyCollabs(playlistId, userId) {
     const query = {
       text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
       values: [playlistId, userId],
@@ -46,4 +46,4 @@ class CollaborationsService {
   }
 }
 
-module.exports = CollaborationsService;
+module.exports = CollabService;

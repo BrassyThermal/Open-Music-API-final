@@ -9,7 +9,7 @@ class PlaylistSongService {
     this._activity = activity;
   }
 
-  async addPlaylistSong(playlistId, songId, userId) {
+  async addSong(playlistId, songId, userId) {
     const id = `playlistSongs-${nanoid(16)}`;
 
     const cekSongId = {
@@ -30,13 +30,13 @@ class PlaylistSongService {
     if (!result.rowCount) {
       throw new InvariantError('Gagal menambahkan lagu ke playlist!');
     }
-    await this._activity.addPlaylistActivity({
+    await this._activity.addActivity({
       playlistId, songId, userId, action: 'add',
     });
     return result.rows[0].id;
   }
 
-  async deletePlaylistSong(songId, playlistId, userId) {
+  async deleteSong(songId, playlistId, userId) {
     const query = {
       text: 'DELETE FROM playlist_songs WHERE song_id = $1 AND playlist_id =$2 RETURNING id',
       values: [songId, playlistId],
@@ -45,7 +45,7 @@ class PlaylistSongService {
     if (!result.rows.length) {
       throw new NotFoundError('ID lagu anda tidak ditemukan!');
     }
-    await this._activity.addPlaylistActivity({
+    await this._activity.addActivity({
       playlistId, songId, userId, action: 'delete',
     });
   }

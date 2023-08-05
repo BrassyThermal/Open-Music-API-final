@@ -1,6 +1,6 @@
 const autoBind = require('auto-bind');
 
-class PlaylistsHandler {
+class PlaylistHandler {
   constructor(playlistService, playlistSongService, playlistActivity, PlaylistValidator) {
     this._playlist = playlistService;
     this._playlistSong = playlistSongService;
@@ -9,22 +9,24 @@ class PlaylistsHandler {
     autoBind(this);
   }
 
-  async postPlaylist(request, h) {
+  async postHandler(request, h) {
     this._validator.validatePlaylist(request.payload);
     const { name } = request.payload;
     const { id: credentialId } = request.auth.credentials;
     const playlistId = await this._playlist.addPlaylist(name, credentialId);
+
     return h.response({
       status: 'success',
-      message: 'Playlist berhasil ditambahkan',
+      message: 'Playlist Anda berhasil ditambahkan!',
       data: {
         playlistId,
       },
     }).code(201);
   }
 
-  async getPlaylistHandler(request) {
-    const playlists = await this._playlist.getPlaylists(request.auth.credentials);
+  async getHandler(request) {
+    const playlists = await this._playlist.getPlaylist(request.auth.credentials);
+
     return {
       status: 'success',
       data: {
@@ -33,36 +35,38 @@ class PlaylistsHandler {
     };
   }
 
-  async deletePlaylistByIdHandler(request) {
+  async deleteByIdHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    await this._playlist.verifyPlaylistOwner(id, credentialId);
+    await this._playlist.verifyOwner(id, credentialId);
     await this._playlist.deletePlaylistById(id);
+
     return {
       status: 'success',
-      message: 'Playlist berhasil dihapus',
+      message: 'Playlist Anda berhasil dihapus!',
     };
   }
 
-  async postPlaylistSongsByIdHandler(request, h) {
+  async postSongByIdHandler(request, h) {
     this._validator.validateManagePlaylist(request.payload);
     const { id: playlistId } = request.params;
     const { songId } = request.payload;
     const { id: credentialId } = request.auth.credentials;
+    await this._playlist.verifyAccess(playlistId, credentialId);
+    await this._playlistSong.addSong(playlistId, songId, credentialId);
 
-    await this._playlist.verifyPlaylistAccess(playlistId, credentialId);
-    await this._playlistSong.addPlaylistSong(playlistId, songId, credentialId);
     return h.response({
       status: 'success',
-      message: 'Playlist songs berhasil ditambahkan',
+      message: 'Playlist musik berhasil ditambahkan!',
     }).code(201);
   }
 
-  async getPlaylistSongsByIdHandler(request) {
+  async getSongByIdHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    await this._playlist.verifyPlaylistAccess(id, credentialId);
     const playlist = await this._playlist.getPlaylistById(id);
+    await this._playlist.verifyAccess(id, credentialId);
+
     return {
       status: 'success',
       data: {
@@ -71,25 +75,26 @@ class PlaylistsHandler {
     };
   }
 
-  async deletePlaylistSongsByIdHandler(request) {
+  async deleteSongByIdHandler(request) {
     this._validator.validateManagePlaylist(request.payload);
-
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
     const { songId } = request.payload;
-    await this._playlist.verifyPlaylistAccess(id, credentialId);
-    await this._playlistSong.deletePlaylistSong(songId, id, credentialId);
+    await this._playlist.verifyAccess(id, credentialId);
+    await this._playlistSong.deleteSong(songId, id, credentialId);
+
     return {
       status: 'success',
-      message: 'Playlist songs berhasil dihapus',
+      message: 'Playlist musik berhasil dihapus!',
     };
   }
 
-  async getPlaylistActivitiesByIdHandler(request) {
+  async getActivityByIdHandler(request) {
     const { id: playlistId } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    await this._playlist.verifyPlaylistAccess(playlistId, credentialId);
-    const activities = await this._playlistActivity.getActivityByPlaylistId(request.params);
+    const activities = await this._playlistActivity.getActivity(request.params);
+    await this._playlist.verifyAccess(playlistId, credentialId);
+
     return {
       status: 'success',
       data: {
@@ -100,4 +105,4 @@ class PlaylistsHandler {
   }
 }
 
-module.exports = PlaylistsHandler;
+module.exports = PlaylistHandler;

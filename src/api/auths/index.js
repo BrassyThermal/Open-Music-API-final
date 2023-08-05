@@ -1,4 +1,4 @@
-const AuthsHandler = require('./handler');
+const AuthHandler = require('./handler');
 const routes = require('./routes');
 
 module.exports = {
@@ -10,12 +10,12 @@ module.exports = {
     tokenManager,
     AuthValidator,
   }) => {
-    const authsHandler = new AuthsHandler(
+    const authHandler = new AuthHandler(
       authService,
       userService,
       tokenManager,
       AuthValidator,
     );
-    server.route(routes(authsHandler));
+    server.route(routes(authHandler));
   },
 };

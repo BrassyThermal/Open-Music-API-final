@@ -24,7 +24,7 @@ class PlaylistService {
     return result.rows[0].id;
   }
 
-  async getPlaylists({ id }) {
+  async getPlaylist({ id }) {
     const query = {
       text: `SELECT playlists.id, playlists.name, users.username FROM playlists
              INNER JOIN users ON playlists.owner = users.id
@@ -82,7 +82,7 @@ class PlaylistService {
     }
   }
 
-  async verifyPlaylistOwner(id, owner) {
+  async verifyOwner(id, owner) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1',
       values: [id],
@@ -97,15 +97,15 @@ class PlaylistService {
     }
   }
 
-  async verifyPlaylistAccess(playlistId, userId) {
+  async verifyAccess(playlistId, userId) {
     try {
-      await this.verifyPlaylistOwner(playlistId, userId);
+      await this.verifyOwner(playlistId, userId);
     } catch (error) {
       if (error instanceof NotFoundError) {
         throw error;
       }
       try {
-        await this._collabService.verifyCollaborator(playlistId, userId);
+        await this._collabService.verifyCollabs(playlistId, userId);
       } catch {
         throw error;
       }

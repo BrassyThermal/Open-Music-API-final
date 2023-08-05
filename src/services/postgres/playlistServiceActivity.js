@@ -7,10 +7,10 @@ class PlaylistActivityService {
     this._pool = new Pool();
   }
 
-  async addPlaylistActivity({
+  async addActivity({
     playlistId, songId, userId, action,
   }) {
-    const id = `playlistSongActivity-${nanoid(16)}`;
+    const id = `Activity-${nanoid(16)}`;
     const time = new Date().toISOString();
     const query = {
       text: 'INSERT INTO playlist_song_activities VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
@@ -21,7 +21,7 @@ class PlaylistActivityService {
     return result.rows[0].id;
   }
 
-  async getActivityByPlaylistId({ id }) {
+  async getActivity({ id }) {
     const query = {
       text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time 
              FROM playlist_song_activities

@@ -11,7 +11,7 @@ class UserService {
   }
 
   async addUser({ username, password, fullname }) {
-    await this.verifyNewUsername(username);
+    await this.verifyUsername(username);
 
     const id = `user-${nanoid(15)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -27,7 +27,7 @@ class UserService {
     return result.rows[0].id;
   }
 
-  async verifyNewUsername(username) {
+  async verifyUsername(username) {
     const query = {
       text: 'SELECT username FROM users WHERE username = $1',
       values: [username],
