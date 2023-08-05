@@ -1,8 +1,4 @@
-const {
-  postAuthSchema,
-  PutAuthSchema,
-  DeleteAuthSchema,
-} = require('./schema');
+const { postAuthSchema, PutAuthSchema, DeleteAuthSchema } = require('./schema');
 const InvariantError = require('../../exceptions/invariantError');
 
 const AuthValidator = {

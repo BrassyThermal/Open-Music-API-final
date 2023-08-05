@@ -2,9 +2,9 @@ const autoBind = require('auto-bind');
 
 class CollabsHandler {
   constructor(collabService, playlistService, userService, CollabValidator) {
-    this._collaborationsService = collabService;
-    this._playlistsService = playlistService;
-    this._usersService = userService;
+    this._collab = collabService;
+    this._playlist = playlistService;
+    this._user = userService;
     this._validator = CollabValidator;
     autoBind(this);
   }
@@ -14,10 +14,10 @@ class CollabsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    await this._usersService.getUserById(userId);
-    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+    await this._user.getUserById(userId);
+    await this._playlist.verifyPlaylistOwner(playlistId, credentialId);
 
-    const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
+    const collaborationId = await this._collab.addCollaboration(playlistId, userId);
     return h.response({
       status: 'success',
       message: 'Kolaborasi berhasil ditambahkan',
@@ -32,8 +32,8 @@ class CollabsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
-    await this._collaborationsService.deleteCollaboration(playlistId, userId);
+    await this._playlist.verifyPlaylistOwner(playlistId, credentialId);
+    await this._collab.deleteCollaboration(playlistId, userId);
     return {
       status: 'success',
       message: 'Kolaborasi berhasil dihapus',

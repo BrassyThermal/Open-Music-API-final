@@ -29,6 +29,8 @@ const CollabValidator = require('./validator/collabs');
 // playlists
 const playlists = require('./api/playlists');
 const PlaylistService = require('./services/postgres/playlistService');
+const PlaylistSongService = require('./services/postgres/playlistServiceSong');
+const PlaylistActivity = require('./services/postgres/playlistServiceActivity');
 const PlaylistValidator = require('./validator/playlists');
 
 const init = async () => {
@@ -37,7 +39,9 @@ const init = async () => {
   const userService = new UserService();
   const authService = new AuthService();
   const collabService = new CollabService();
+  const playlistActivity = new PlaylistActivity();
   const playlistService = new PlaylistService(collabService);
+  const playlistSongService = new PlaylistSongService(playlistActivity);
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -106,6 +110,8 @@ const init = async () => {
       plugin: playlists,
       options: {
         playlistService,
+        playlistSongService,
+        playlistActivity,
         PlaylistValidator,
       },
     },
@@ -124,23 +130,21 @@ const init = async () => {
     const { response } = request;
     if (response instanceof Error) {
       if (response instanceof ClientError) {
-        const newResponse = h.response({
+        return h.response({
           status: 'fail',
           message: response.message,
-        });
-        newResponse.code(response.statusCode);
-        return newResponse;
+        }).code(response.statusCode);
       }
+
       console.log(response.stack);
+
       if (!response.isServer) {
         return h.continue;
       }
-      const newResponse = h.response({
+      return h.response({
         status: 'error',
         message: 'Terjadi kegagalan pada server!',
-      });
-      newResponse.code(500);
-      return newResponse;
+      }).code(500);
     }
 
     return h.continue;

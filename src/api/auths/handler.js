@@ -1,6 +1,6 @@
 const autoBind = require('auto-bind');
 
-class AuthenticationsHandler {
+class AuthsHandler {
   constructor(authService, userService, tokenManager, AuthValidator) {
     this._auth = authService;
     this._user = userService;
@@ -61,4 +61,4 @@ class AuthenticationsHandler {
   }
 }
 
-module.exports = AuthenticationsHandler;
+module.exports = AuthsHandler;
