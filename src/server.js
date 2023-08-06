@@ -27,11 +27,10 @@ const init = async () => {
         }).code(response.statusCode);
       }
 
-      console.log(response.stack);
-
       if (!response.isServer) {
         return h.continue;
       }
+      
       return h.response({
         status: 'error',
         message: 'Terjadi kegagalan pada server!',
