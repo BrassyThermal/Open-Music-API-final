@@ -30,7 +30,7 @@ const init = async () => {
       if (!response.isServer) {
         return h.continue;
       }
-      
+
       return h.response({
         status: 'error',
         message: 'Terjadi kegagalan pada server!',
