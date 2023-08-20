@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 exports.shorthands = undefined;
 exports.up = (pgm) => {
-  pgm.createTable('album_likes', {
+  pgm.createTable('user_album_likes', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
@@ -9,18 +9,18 @@ exports.up = (pgm) => {
     user_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      refrences: 'users',
+      references: 'users',
       onDelete: 'CASCADE',
     },
     album_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      refrences: 'albums',
+      references: 'albums',
       onDelete: 'CASCADE',
     },
   });
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('album_likes');
+  pgm.dropTable('user_album_likes');
 };

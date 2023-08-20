@@ -1,13 +1,14 @@
 require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
-const { registerPlugins } = require('./plugins');
+const config = require('./utils/config');
+const { registerPlugins } = require('./utils/plugins');
 const ClientError = require('./exceptions/clientError');
 
 const init = async () => {
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*'],
@@ -27,6 +28,7 @@ const init = async () => {
         }).code(response.statusCode);
       }
 
+      console.log(response.stack);
       if (!response.isServer) {
         return h.continue;
       }

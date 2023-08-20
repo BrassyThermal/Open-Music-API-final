@@ -12,13 +12,13 @@ class PlaylistSongService {
   async addSong(playlistId, songId, userId) {
     const id = `playlistSongs-${nanoid(16)}`;
 
-    const cekSongId = {
+    const checkID = {
       text: 'SELECT * FROM songs WHERE id = $1',
       values: [songId],
     };
 
-    const resultSongId = await this._pool.query(cekSongId);
-    if (!resultSongId.rows.length) {
+    const resultID = await this._pool.query(checkID);
+    if (!resultID.rows.length) {
       throw new NotFoundError('Lagu anda tidak ditemukan!');
     }
 

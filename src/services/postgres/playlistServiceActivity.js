@@ -3,8 +3,9 @@ const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/notFoundError');
 
 class PlaylistActivityService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cache = cacheService;
   }
 
   async addActivity({
@@ -34,6 +35,7 @@ class PlaylistActivityService {
     if (!result.rows.length) {
       throw new NotFoundError('Aktifitas anda tidak ditemukan!');
     }
+    await this._cache.set(`activity:${id}`, JSON.stringify(result.rows));
     return result.rows;
   }
 }
