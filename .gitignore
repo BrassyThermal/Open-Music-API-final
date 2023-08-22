@@ -2,5 +2,5 @@ node_modules
 package-lock.json
 .env
 .prod.env
-src/api/uploads/file/cover
-src/api/uploads/file/images
+src/api/uploads/file
+src/api/uploads/file

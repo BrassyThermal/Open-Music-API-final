@@ -1,6 +1,7 @@
 const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
 const path = require('path');
+const config = require('./config');
 const tokenManager = require('../tokenize/tokenManager');
 
 const albums = require('../api/albums');
@@ -33,7 +34,7 @@ const ExportsValidator = require('../validator/exports');
 
 // Uploads
 const uploads = require('../api/uploads');
-const StorageService = require('../services/S3/storageService');
+const StorageService = require('../services/storage/storageService');
 const UploadsValidator = require('../validator/uploads');
 
 // Album Likes
@@ -52,7 +53,7 @@ exports.registerPlugins = async (server) => {
   const playlistService = new PlaylistService(collabService);
   const playlistSongService = new PlaylistSongService(playlistActivity);
   const albumLikesService = new AlbumLikesService(albumService, cacheService);
-  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
+  const storageService = new StorageService(path.resolve(__dirname, '../api/uploads/file/images'));
 
   await server.register([
     {
@@ -64,12 +65,12 @@ exports.registerPlugins = async (server) => {
   ]);
 
   server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.Jwt.access,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.Jwt.tokenAge,
     },
     validate: (artifacts) => ({
       isValid: true,
@@ -146,7 +147,6 @@ exports.registerPlugins = async (server) => {
     {
       plugin: uploads,
       options: {
-        service: albumService,
         storageService,
         validator: UploadsValidator,
       },

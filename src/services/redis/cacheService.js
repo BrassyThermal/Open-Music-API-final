@@ -4,13 +4,18 @@ const config = require('../../utils/config');
 class CacheService {
   constructor() {
     this._client = redis.createClient({
-      host: config.redis.host, // Menggunakan langsung "host" tanpa "socket"
+      socket: {
+        host: config.redis.host,
+      },
     });
     this._client.on('error', (error) => console.error(error));
+    this._client.connect();
   }
 
   async set(key, value, expirationInSecond = 1800) {
-    await this._client.set(key, value, 'EX', expirationInSecond); // Menggunakan 'EX' sebagai argumen
+    await this._client.set(key, value, {
+      EX: expirationInSecond,
+    });
   }
 
   async get(key) {
