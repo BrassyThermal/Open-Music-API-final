@@ -1,13 +1,13 @@
 {
-  "name": "submission1",
+  "name": "submission3",
   "version": "1.0.0",
-  "description": "Open Music API V1 Submission dicoding ",
+  "description": "Open Music API V3 Submission dicoding ",
   "main": "server.js",
   "scripts": {
     "start-dev": "nodemon ./src/server.js",
     "build": "NODE_ENV=production node ./src/server.js",
     "migrate": "node-pg-migrate",
-    "lint": "eslint . --fix"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "Muhammad Yusril dev Jamilan",
