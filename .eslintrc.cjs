@@ -11,6 +11,7 @@ module.exports = {
       files: [
         './src/api/**/*.js',
         './src/services/postgres/**/*.js',
+        './src/services/storage/**/*.js',
       ],
       rules: {
         'class-methods-use-this': 'off',
