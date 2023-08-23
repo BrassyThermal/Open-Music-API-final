@@ -28,7 +28,6 @@ const init = async () => {
         }).code(response.statusCode);
       }
 
-      console.log(response.stack);
       if (!response.isServer) {
         return h.continue;
       }

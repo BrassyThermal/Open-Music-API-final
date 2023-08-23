@@ -1,5 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const fs = require('fs');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const autoBind = require('auto-bind');
 const { Pool } = require('pg');
 
@@ -29,7 +29,7 @@ class StorageService {
     });
   }
 
-  async addAlbumCover(cover, id) {
+  async addCover(cover, id) {
     const query = {
       text: 'UPDATE albums SET cover = $1 WHERE id = $2 RETURNING id',
       values: [cover, id],

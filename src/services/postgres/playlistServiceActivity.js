@@ -17,7 +17,6 @@ class PlaylistActivityService {
       text: 'INSERT INTO playlist_song_activities VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
       values: [id, playlistId, songId, userId, action, time],
     };
-
     const result = await this._pool.query(query);
     return result.rows[0].id;
   }
@@ -35,6 +34,7 @@ class PlaylistActivityService {
     if (!result.rows.length) {
       throw new NotFoundError('Aktifitas anda tidak ditemukan!');
     }
+
     await this._cache.set(`activity:${id}`, JSON.stringify(result.rows));
     return result.rows;
   }

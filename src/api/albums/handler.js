@@ -1,8 +1,9 @@
 const autoBind = require('auto-bind');
 
 class AlbumHandler {
-  constructor(albumService, AlbumValidator) {
+  constructor(albumService, albumLikeService, AlbumValidator) {
     this._service = albumService;
+    this._like = albumLikeService;
     this._validator = AlbumValidator;
     autoBind(this);
   }
@@ -56,6 +57,42 @@ class AlbumHandler {
     return this._Response(h, 200, {
       status: 'success',
       message: 'Album telah dihapus!',
+    });
+  }
+
+  async postAlbumLike(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+    const { id: albumId } = request.params;
+
+    await this._like.verifyLike(albumId, credentialId);
+    await this._like.addLike(albumId, credentialId);
+
+    return this._Response(h, 201, {
+      status: 'success',
+      message: ' Anda menambahkan suka pada album ini!',
+    });
+  }
+
+  async getAlbumLike(request, h) {
+    const { id } = request.params;
+    const { likes, dataSource } = await this._like.getLike(id);
+
+    return this._Response(h, 200, {
+      status: 'success',
+      data: {
+        likes: parseInt(likes, 10),
+      },
+    }).header('X-Data-Source', dataSource);
+  }
+
+  async deleteAlbumLike(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+    const { id: albumId } = request.params;
+
+    await this._like.deleteLike(albumId, credentialId);
+    return this._Response(h, 200, {
+      status: 'success',
+      message: ' Anda menghapus suka pada album ini!',
     });
   }
 }

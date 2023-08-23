@@ -1,22 +1,22 @@
 const autoBind = require('auto-bind');
 
-class ExportsHandler {
-  constructor(service, playlistsService, validator) {
-    this._service = service;
-    this._playlistsService = playlistsService;
-    this._validator = validator;
+class ExportHandler {
+  constructor(ProducerService, playlistService, ExportValidator) {
+    this._service = ProducerService;
+    this._playlistService = playlistService;
+    this._validator = ExportValidator;
 
     autoBind(this);
   }
 
-  async postExportPlaylistHandler(request, h) {
-    this._validator.validateExportSongsPayload(request.payload);
+  async exportHandler(request, h) {
+    this._validator.validateExport(request.payload);
     const userId = request.auth.credentials.id;
     const { id: playlistId } = request.params;
     const { targetEmail } = request.payload;
 
-    await this._playlistsService.verifyAccess(playlistId, userId);
-    const playlist = await this._playlistsService.getPlaylistSongs(playlistId);
+    await this._playlistService.verifyAccess(playlistId, userId);
+    const playlist = await this._playlistService.getPlaylistSongs(playlistId);
 
     const message = {
       targetEmail,
@@ -25,13 +25,11 @@ class ExportsHandler {
 
     await this._service.sendMessage('export:playlists', JSON.stringify(message));
 
-    const response = h.response({
+    return h.response({
       status: 'success',
-      message: 'Permintaan anda dalam antrean',
+      message: 'Permintaan anda sedang dalam antrean!',
     }).code(201);
-
-    return response;
   }
 }
 
-module.exports = ExportsHandler;
+module.exports = ExportHandler;

@@ -12,7 +12,6 @@ class PlaylistService {
 
   async addPlaylist(name, owner) {
     const id = `playlist-${nanoid(16)}`;
-
     const query = {
       text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
       values: [id, name, owner],
@@ -32,7 +31,6 @@ class PlaylistService {
              WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
       values: [id],
     };
-
     const result = await this._pool.query(query);
     return result.rows;
   }
@@ -47,27 +45,18 @@ class PlaylistService {
              WHERE playlists.id = $1`,
       values: [id],
     };
-
     const result = await this._pool.query(query);
-
     if (!result.rowCount) {
       throw new NotFoundError('Playlist tidak ditemukan!');
     }
-
     const songs = result.rows.map((row) => ({
       id: row.song_id,
       title: row.song_title,
       performer: row.performer,
     }));
-
-    const playlistResult = {
-      id: result.rows[0].id,
-      name: result.rows[0].name,
-      username: result.rows[0].username,
-      songs,
+    return {
+      id: result.rows[0].id, name: result.rows[0].name, username: result.rows[0].username, songs,
     };
-
-    return playlistResult;
   }
 
   async deletePlaylistById(id) {
@@ -75,7 +64,6 @@ class PlaylistService {
       text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
       values: [id],
     };
-
     const result = await this._pool.query(query);
     if (!result.rowCount) {
       throw new NotFoundError('Playlist tidak ditemukan!');
@@ -117,7 +105,6 @@ class PlaylistService {
       text: 'SELECT id, name FROM playlists WHERE id = $1',
       values: [id],
     });
-
     const query = await this._pool.query({
       text: `SELECT songs.id, songs.title, songs.performer
              FROM songs
@@ -125,13 +112,7 @@ class PlaylistService {
              WHERE playlist_songs.playlist_id = $1`,
       values: [id],
     });
-
-    const result = {
-      ...queryPlaylist.rows[0],
-      songs: query.rows,
-    };
-
-    return result;
+    return { ...queryPlaylist.rows[0], songs: query.rows };
   }
 }
 

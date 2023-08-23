@@ -14,7 +14,7 @@ exports.up = (pgm) => {
       notNull: true,
     },
     cover: {
-      type: 'VARCHAR(255)',
+      type: 'TEXT',
     },
   });
 };

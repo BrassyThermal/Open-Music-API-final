@@ -9,16 +9,24 @@ exports.up = (pgm) => {
     user_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'users',
-      onDelete: 'CASCADE',
     },
     album_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'albums',
-      onDelete: 'CASCADE',
     },
   });
+
+  pgm.addConstraint(
+    'user_album_likes',
+    'fk_user_album_likes.user_id',
+    'FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE',
+  );
+
+  pgm.addConstraint(
+    'user_album_likes',
+    'fk_user_album_likes.album_id',
+    'FOREIGN KEY(album_id) REFERENCES albums(id) ON DELETE CASCADE',
+  );
 };
 
 exports.down = (pgm) => {

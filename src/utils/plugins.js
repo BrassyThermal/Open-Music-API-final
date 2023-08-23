@@ -10,7 +10,11 @@ const users = require('../api/users');
 const auths = require('../api/auths');
 const collabs = require('../api/collabs');
 const playlists = require('../api/playlists');
+const _exports = require('../api/exports');
+const uploads = require('../api/uploads');
 
+const CacheService = require('../services/redis/cacheService');
+const AlbumLikeService = require('../services/postgres/albumLikeService');
 const AlbumService = require('../services/postgres/albumService');
 const SongService = require('../services/postgres/songService');
 const UserService = require('../services/postgres/userService');
@@ -19,6 +23,8 @@ const CollabService = require('../services/postgres/CollabService');
 const PlaylistService = require('../services/postgres/playlistService');
 const PlaylistSongService = require('../services/postgres/playlistServiceSong');
 const PlaylistActivity = require('../services/postgres/playlistServiceActivity');
+const ProducerService = require('../services/rabbitmq/producerService');
+const StorageService = require('../services/storage/storageService');
 
 const AlbumValidator = require('../validator/albums');
 const SongValidator = require('../validator/songs');
@@ -26,21 +32,8 @@ const UserValidator = require('../validator/users');
 const AuthValidator = require('../validator/auths');
 const CollabValidator = require('../validator/collabs');
 const PlaylistValidator = require('../validator/playlists');
-
-// Exports
-const _exports = require('../api/exports');
-const ProducerService = require('../services/rabbitmq/producerService');
-const ExportsValidator = require('../validator/exports');
-
-// Uploads
-const uploads = require('../api/uploads');
-const StorageService = require('../services/storage/storageService');
-const UploadsValidator = require('../validator/uploads');
-
-// Album Likes
-const albumLikes = require('../api/likes');
-const AlbumLikesService = require('../services/postgres/likeService');
-const CacheService = require('../services/redis/cacheService');
+const ExportValidator = require('../validator/exports');
+const UploadValidator = require('../validator/uploads');
 
 exports.registerPlugins = async (server) => {
   const cacheService = new CacheService();
@@ -52,7 +45,7 @@ exports.registerPlugins = async (server) => {
   const playlistActivity = new PlaylistActivity(cacheService);
   const playlistService = new PlaylistService(collabService);
   const playlistSongService = new PlaylistSongService(playlistActivity);
-  const albumLikesService = new AlbumLikesService(albumService, cacheService);
+  const albumLikeService = new AlbumLikeService(albumService, cacheService);
   const storageService = new StorageService(path.resolve(__dirname, '../api/uploads/file/images'));
 
   await server.register([
@@ -85,6 +78,7 @@ exports.registerPlugins = async (server) => {
       plugin: albums,
       options: {
         albumService,
+        albumLikeService,
         AlbumValidator,
       },
     },
@@ -130,25 +124,18 @@ exports.registerPlugins = async (server) => {
       },
     },
     {
-      plugin: albumLikes,
-      options: {
-        albumsService: albumService,
-        service: albumLikesService,
-      },
-    },
-    {
       plugin: _exports,
       options: {
-        service: ProducerService,
-        playlistsService: playlistService,
-        validator: ExportsValidator,
+        ProducerService,
+        playlistService,
+        ExportValidator,
       },
     },
     {
       plugin: uploads,
       options: {
         storageService,
-        validator: UploadsValidator,
+        UploadValidator,
       },
     },
   ]);
