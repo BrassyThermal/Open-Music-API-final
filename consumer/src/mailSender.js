@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 const nodemailer = require('nodemailer');
 
 class MailSender {
@@ -16,11 +17,11 @@ class MailSender {
     const message = {
       from: 'Open Music Apps',
       to: targetEmail,
-      subject: 'Exports Playlists',
-      text: 'Your Exported Playlist!',
+      subject: 'Ekspor Playlists',
+      text: 'Terlampir hasil dari ekspor playlist',
       attachments: [
         {
-          filename: 'playlist.json',
+          filename: 'playlists.json',
           content,
         },
       ],

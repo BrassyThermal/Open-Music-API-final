@@ -1,8 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const autoBind = require('auto-bind');
 
 class Listener {
-  constructor(playlistService, mailSender) {
-    this._playlist = playlistService;
+  constructor(playlistsService, mailSender) {
+    this._playlistsService = playlistsService;
     this._mailSender = mailSender;
 
     autoBind(this);
@@ -10,12 +11,11 @@ class Listener {
 
   async listen(message) {
     try {
-      const { playlistId, targetEmail } = JSON
-          .parse(message.content.toString());
+      const { playlistId, targetEmail } = JSON.parse(message.content.toString());
 
-      const playlist = await this._playlist.getPlaylist(playlistId);
+      const playlist = await this._playlistsService.getPlaylists(playlistId);
       console.log('playlist:', playlist);
-      const songs = await this._playlist.getSong(playlistId);
+      const songs = await this._playlistsService.getSongs(playlistId);
       console.log('songs:', songs);
 
       const playlistData = {
@@ -30,8 +30,7 @@ class Listener {
         },
       };
 
-      const result = await this._mailSender
-          .sendEmail(targetEmail, JSON.stringify(playlistData));
+      const result = await this._mailSender.sendEmail(targetEmail, JSON.stringify(playlistData));
       console.log(result);
     } catch (error) {
       console.error(error);
