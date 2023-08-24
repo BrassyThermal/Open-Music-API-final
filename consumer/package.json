@@ -1,0 +1,24 @@
+{
+  "name": "consumer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "consumer": "node src/index.js",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "auto-bind": "^4.0.0",
+    "eslint": "^8.47.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1",
+    "nodemailer": "^6.9.4",
+    "pg": "^8.11.3"
+  }
+}
