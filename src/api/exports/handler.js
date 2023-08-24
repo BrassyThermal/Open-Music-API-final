@@ -19,8 +19,10 @@ class ExportHandler {
     const playlist = await this._playlistService.getPlaylistSongs(playlistId);
 
     const message = {
+      userId,
       targetEmail,
       playlist,
+      playlistId,
     };
 
     await this._service.sendMessage('export:playlists', JSON.stringify(message));

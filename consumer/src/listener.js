@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 const autoBind = require('auto-bind');
 
 class Listener {
